@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       repo_url:
-        description: 'GitHub Repo URL'
+        description: "GitHub Repo URL"
         required: true
 
 jobs:
@@ -12,30 +12,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Runner Repo
+        uses: actions/checkout@v4
+
       - name: Clone Target Repo
         run: |
           git clone ${{ github.event.inputs.repo_url }} target
 
-      - name: Install Dependencies
-        run: |
-          cd target
-          npm install
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
 
-      - name: Start App
+      - name: Install Target Dependencies
         run: |
           cd target
-          npm run dev &
-          sleep 20
+          npm install || yarn install || pnpm install
+
+      - name: Start Target App
+        run: |
+          cd target
+          (npm run dev || npm start) &
+          sleep 25
 
       - name: Install Playwright
-        run: npm install playwright
+        run: |
+          npm install playwright
+          npx playwright install
 
-      - name: Install Browsers
-        run: npx playwright install
+      - name: Debug Files
+        run: |
+          pwd
+          ls -la
 
-     - name: Take Screenshot
-      run: |
-    node ./screenshot.js
+      - name: Take Screenshot
+        run: |
+          node screenshot.js
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
