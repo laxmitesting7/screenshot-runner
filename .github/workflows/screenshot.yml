@@ -29,21 +29,16 @@ jobs:
           cd target
           npm install || yarn install || pnpm install
 
-      - name: Start Target App
+      - name: Start Target App on Port 3000
         run: |
           cd target
-          (npm run dev || npm start) &
-          sleep 25
+          PORT=3000 npm run dev || PORT=3000 npm start &
+          sleep 30
 
       - name: Install Playwright
         run: |
           npm install playwright
           npx playwright install
-
-      - name: Debug Files
-        run: |
-          pwd
-          ls -la
 
       - name: Take Screenshot
         run: |
