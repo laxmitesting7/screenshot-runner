@@ -33,8 +33,9 @@ jobs:
       - name: Install Browsers
         run: npx playwright install
 
-      - name: Take Screenshot
-        run: node screenshot.js
+     - name: Take Screenshot
+      run: |
+    node ./screenshot.js
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
