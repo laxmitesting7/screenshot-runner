@@ -24,28 +24,42 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install Target Dependencies
+      - name: Install Dependencies
         run: |
           cd target
-          npm install || yarn install || pnpm install
+          npm install
 
-      - name: Start Target App on Port 3000
+      - name: Build Project
         run: |
           cd target
-          PORT=3000 npm run dev || PORT=3000 npm start &
-          sleep 30
+          npm run build || echo "No build step"
+
+      - name: Install Static Server
+        run: npm install -g serve
+
+      - name: Start Static Server
+        run: |
+          cd target
+          if [ -d "dist" ]; then
+            serve -s dist -l 3000 &
+          elif [ -d "build" ]; then
+            serve -s build -l 3000 &
+          else
+            echo "No build folder found"
+            exit 1
+          fi
+          sleep 20
 
       - name: Install Playwright
         run: |
           npm install playwright
-          npx playwright install
+          npx playwright install --with-deps
 
       - name: Take Screenshot
-        run: |
-          node screenshot.js
+        run: node screenshot.js
 
-     - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: screenshots
-        path: screenshots/
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: screenshots/
