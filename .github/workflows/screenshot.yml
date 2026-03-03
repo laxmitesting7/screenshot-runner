@@ -29,26 +29,16 @@ jobs:
           cd target
           npm install
 
-      - name: Build Project
+      - name: Build Next.js App
         run: |
           cd target
-          npm run build || echo "No build step"
+          npm run build
 
-      - name: Install Static Server
-        run: npm install -g serve
-
-      - name: Start Static Server
+      - name: Start Next.js Production Server on 3000
         run: |
           cd target
-          if [ -d "dist" ]; then
-            serve -s dist -l 3000 &
-          elif [ -d "build" ]; then
-            serve -s build -l 3000 &
-          else
-            echo "No build folder found"
-            exit 1
-          fi
-          sleep 20
+          npx next start -p 3000 &
+          sleep 25
 
       - name: Install Playwright
         run: |
