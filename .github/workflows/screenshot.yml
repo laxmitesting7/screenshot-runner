@@ -1,0 +1,43 @@
+name: Screenshot Runner
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_url:
+        description: 'GitHub Repo URL'
+        required: true
+
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone Target Repo
+        run: |
+          git clone ${{ github.event.inputs.repo_url }} target
+
+      - name: Install Dependencies
+        run: |
+          cd target
+          npm install
+
+      - name: Start App
+        run: |
+          cd target
+          npm run dev &
+          sleep 20
+
+      - name: Install Playwright
+        run: npm install playwright
+
+      - name: Install Browsers
+        run: npx playwright install
+
+      - name: Take Screenshot
+        run: node screenshot.js
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: homepage.png
