@@ -44,8 +44,8 @@ jobs:
         run: |
           node screenshot.js
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshots
-          path: homepage.png
+     - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: screenshots
+        path: screenshots/
